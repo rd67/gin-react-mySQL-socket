@@ -5,10 +5,10 @@ import (
 	"github.com/rd67/gin-react-mySQL-socket/models"
 )
 
-type UserRegisterDataResponseStruct struct {
+type IUserRegisterDataResponse struct {
 	User models.User `json:"user"`
 }
-type UserRegisterResponseStruct struct {
-	configs.CommonResponseStruct
-	Data UserRegisterDataResponseStruct `json:"data"`
+type IUserRegisterResponse struct {
+	configs.ICommonResponse
+	Data IUserRegisterDataResponse `json:"data"`
 }

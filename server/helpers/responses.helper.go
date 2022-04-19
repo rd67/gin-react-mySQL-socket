@@ -16,43 +16,43 @@ import (
 ///////////////////////
 
 // Handle validator error formatting
-type ValidationErrorDataStruct struct {
+type IValidationErrorData struct {
 	Field  string `json:"field"`
 	Reason string `json:"reason"`
 }
 
-func FormatValidationError(verr validator.ValidationErrors) []ValidationErrorDataStruct {
-	errs := []ValidationErrorDataStruct{}
+func FormatValidationError(verr validator.ValidationErrors) []IValidationErrorData {
+	errs := []IValidationErrorData{}
 
 	for _, f := range verr {
 		err := f.ActualTag()
 		if f.Param() != "" {
 			err = fmt.Sprintf("%s=%s", err, f.Param())
 		}
-		errs = append(errs, ValidationErrorDataStruct{Field: f.Field(), Reason: err})
+		errs = append(errs, IValidationErrorData{Field: f.Field(), Reason: err})
 	}
 
 	return errs
 }
 
 //	Validation Error Response
-type ValidationResponseStruct struct {
-	StatusCode int                         `json:"statusCode"`
-	Message    string                      `json:"message"`
-	Data       []ValidationErrorDataStruct `json:"data"`
-	Error      string                      `json:"error"`
+type IValidationResponse struct {
+	StatusCode int                    `json:"statusCode"`
+	Message    string                 `json:"message"`
+	Data       []IValidationErrorData `json:"data"`
+	Error      string                 `json:"error"`
 }
 
 func ValidationResponse(c *gin.Context, err error) {
 
 	var ve validator.ValidationErrors
 
-	var errorData = make([]ValidationErrorDataStruct, 0)
+	var errorData = make([]IValidationErrorData, 0)
 	if errors.As(err, &ve) {
 		errorData = FormatValidationError(ve)
 	}
 
-	response := ValidationResponseStruct{
+	response := IValidationResponse{
 		StatusCode: http.StatusBadRequest,
 		Message:    "Validation failed, kindly check your parameters",
 		Data:       errorData,
@@ -66,8 +66,8 @@ func ValidationResponse(c *gin.Context, err error) {
 ///////////////////////
 //	Error Response
 ///////////////////////
-type ErrorResponseStruct struct {
-	configs.CommonResponseStruct
+type IErrorResponse struct {
+	configs.ICommonResponse
 	Error string `json:"error"`
 }
 
@@ -86,8 +86,8 @@ func ErrorResponse(c *gin.Context, err error) {
 
 	fmt.Println(err)
 
-	response := ErrorResponseStruct{
-		CommonResponseStruct: configs.CommonResponseStruct{
+	response := IErrorResponse{
+		ICommonResponse: configs.ICommonResponse{
 			StatusCode: statusCode,
 			Message:    message,
 		},
@@ -101,14 +101,14 @@ func ErrorResponse(c *gin.Context, err error) {
 ///////////////////////
 //	Success Response
 ///////////////////////
-type ActionFailedResponseStruct struct {
-	configs.CommonResponseStruct
+type IActionFailedResponse struct {
+	configs.ICommonResponse
 }
 
 func ActionFailedResponse(c *gin.Context, message string) {
 
-	response := ActionFailedResponseStruct{
-		CommonResponseStruct: configs.CommonResponseStruct{
+	response := IActionFailedResponse{
+		ICommonResponse: configs.ICommonResponse{
 			StatusCode: http.StatusBadRequest,
 			Message:    message,
 		},

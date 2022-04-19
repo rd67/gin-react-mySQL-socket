@@ -15,12 +15,12 @@ func init() {
 	}
 }
 
-type AppConfigStruct struct {
+type IAppConfig struct {
 	Port int
 	Name string
 }
 
-type DatabaseConfigStruct struct {
+type IDatabaseConfig struct {
 	Host     string
 	Database string
 	User     string
@@ -28,18 +28,18 @@ type DatabaseConfigStruct struct {
 	Port     string
 }
 
-type JwtConfigStruct struct {
+type IJwtConfig struct {
 	SecretKey    string
 	HourLifespan int
 }
 
-type ConfigStruct struct {
-	App      AppConfigStruct
-	Database DatabaseConfigStruct
-	Jwt      JwtConfigStruct
+type IConfig struct {
+	App      IAppConfig
+	Database IDatabaseConfig
+	Jwt      IJwtConfig
 }
 
-var Config ConfigStruct
+var Config IConfig
 
 func init() {
 
@@ -48,12 +48,12 @@ func init() {
 		log.Fatal(err)
 	}
 
-	AppConfig := AppConfigStruct{
+	AppConfig := IAppConfig{
 		Port: Port,
 		Name: os.Getenv("APP_NAME"),
 	}
 
-	DatabaseConfig := DatabaseConfigStruct{
+	DatabaseConfig := IDatabaseConfig{
 		Host:     os.Getenv("DATABASE_HOST"),
 		Database: os.Getenv("DATABASE_NAME"),
 		User:     os.Getenv("DATABASE_USER"),
@@ -66,12 +66,12 @@ func init() {
 		log.Fatal(err.Error())
 	}
 
-	JwtConfig := JwtConfigStruct{
+	JwtConfig := IJwtConfig{
 		SecretKey:    os.Getenv("JWT_SECRET_KEY"),
 		HourLifespan: JwtHourLifespan,
 	}
 
-	Config = ConfigStruct{
+	Config = IConfig{
 		App:      AppConfig,
 		Database: DatabaseConfig,
 		Jwt:      JwtConfig,

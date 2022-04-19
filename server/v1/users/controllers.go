@@ -52,12 +52,12 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
-	response := UserRegisterResponseStruct{
-		CommonResponseStruct: configs.CommonResponseStruct{
+	response := IUserRegisterResponse{
+		ICommonResponse: configs.ICommonResponse{
 			StatusCode: http.StatusCreated,
 			Message:    "User registered successfully",
 		},
-		Data: UserRegisterDataResponseStruct{
+		Data: IUserRegisterDataResponse{
 			User: user,
 		},
 	}
