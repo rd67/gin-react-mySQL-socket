@@ -13,13 +13,12 @@ import (
 
 var JwtConfig = configs.Config.Jwt
 
-func JwtGenerateToken(user_id uint) (string, error) {
+func JwtGenerateToken(id uint) (string, error) {
 	fmt.Println(JwtConfig)
 
 	claims := jwt.MapClaims{}
 
-	claims["user_id"] = user_id
-
+	claims["id"] = id
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(JwtConfig.HourLifespan)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)

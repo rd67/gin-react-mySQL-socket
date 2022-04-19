@@ -12,7 +12,7 @@ func AuthMiddleware() gin.HandlerFunc {
 	return func(c *gin.Context) {
 
 		if err := utils.JwtValidateToken(c); err != nil {
-			response := configs.CommonResponseStruct{
+			response := configs.ICommonResponse{
 				StatusCode: http.StatusUnauthorized,
 				Message:    "Unauthorized",
 			}

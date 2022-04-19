@@ -24,7 +24,7 @@ func main() {
 
 	//	Not Found Route
 	router.NoRoute(func(c *gin.Context) {
-		response := configs.CommonResponseStruct{
+		response := configs.ICommonResponse{
 			StatusCode: http.StatusNotFound,
 			Message:    "Route not found",
 		}

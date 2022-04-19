@@ -15,14 +15,10 @@ type User struct {
 
 	Password string `json:"password" gorm:"type:tinytext; not null;"`
 
-	RefreshToken string `json:"refresh_token" gorm:"type:varchar(512); not null;"`
-
 	CreatedAt time.Time      `json:"created_at" gorm:"not null; default:CURRENT_TIMESTAMP(3);"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"not null; default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3);"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index:idx_email_deleted;"`
 
 	//	Relations
-
-	AccessToken  UserToken   `json:"access_token" gorm:"foreignKey:user_id;"`
 	AccessTokens []UserToken `json:"access_tokens" gorm:"foreignKey:user_id;"`
 }
