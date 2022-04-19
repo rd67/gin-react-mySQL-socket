@@ -14,11 +14,7 @@ import (
 func UserRegister(c *gin.Context) {
 
 	//	Validating Response
-	var data struct {
-		Name     string `form:"name" binding:"required,min=3,max=100"`
-		Email    string `form:"email" binding:"required,email,max=100"`
-		Password string `form:"password" binding:"required,min=6"`
-	}
+	var data IUserRegisterInput
 	if err := c.ShouldBind(&data); err != nil {
 		helpers.ValidationResponse(c, err)
 		return
@@ -31,7 +27,7 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 	if emailCount > 0 {
-		helpers.ActionFailedResponse(c, "Sorry, this email is already registered with us")
+		helpers.ActionFailedResponse(c, http.StatusBadGateway, USER_MESSAGES["EmailAlreadyRegistered"])
 		return
 	}
 
@@ -52,16 +48,69 @@ func UserRegister(c *gin.Context) {
 		return
 	}
 
+	var token string
+	token, err = UserTokenGenerate(user.ID)
+	if err != nil {
+		helpers.ErrorResponse(c, err)
+		return
+	}
+
 	response := IUserRegisterResponse{
 		ICommonResponse: configs.ICommonResponse{
 			StatusCode: http.StatusCreated,
 			Message:    "User registered successfully",
 		},
 		Data: IUserRegisterDataResponse{
-			User: user,
+			Token: token,
+			User:  user,
 		},
 	}
 
 	c.JSON(response.StatusCode, response)
 	return
+}
+
+//	User Login
+func UserLogin(c *gin.Context) {
+	var data IUserLoginInput
+
+	err := c.ShouldBind(&data)
+	if err != nil {
+		helpers.ValidationResponse(c, err)
+		return
+	}
+
+	var user models.User
+	err = utils.DBConn.Where(fmt.Sprintf("email = '%s'", data.Email)).First(&user).Error
+	if err != nil {
+		helpers.ActionFailedResponse(c, http.StatusBadRequest, USER_MESSAGES["AccountNotFound"])
+		return
+	}
+
+	err = utils.HashMatch(user.Password, data.Password)
+	if err != nil {
+		helpers.ActionFailedResponse(c, http.StatusBadRequest, USER_MESSAGES["AccountNotFound"])
+	}
+
+	var token string
+	token, err = UserTokenGenerate(user.ID)
+	if err != nil {
+		helpers.ErrorResponse(c, err)
+		return
+	}
+
+	response := IUserLoginResponse{
+		ICommonResponse: configs.ICommonResponse{
+			StatusCode: http.StatusOK,
+			Message:    USER_MESSAGES["LoggedInSuccess"],
+		},
+		Data: IUserLoginDataResponse{
+			Token: token,
+			User:  user,
+		},
+	}
+
+	c.JSON(response.StatusCode, response)
+	return
+
 }

@@ -105,11 +105,11 @@ type IActionFailedResponse struct {
 	configs.ICommonResponse
 }
 
-func ActionFailedResponse(c *gin.Context, message string) {
+func ActionFailedResponse(c *gin.Context, statusCode int, message string) {
 
 	response := IActionFailedResponse{
 		ICommonResponse: configs.ICommonResponse{
-			StatusCode: http.StatusBadRequest,
+			StatusCode: statusCode,
 			Message:    message,
 		},
 	}
