@@ -19,6 +19,7 @@ func init() {
 func main() {
 	router := gin.Default()
 
+	router.Use(middlewares.JSONLogMiddleware())
 	router.Use(middlewares.RequestIdHandler())
 	router.Use(cors.Default())
 

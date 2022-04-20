@@ -117,7 +117,6 @@ func UserLogin(c *gin.Context) {
 
 //	Users Listing
 func UsersListing(c *gin.Context) {
-
 	var data = IUsersListing{
 		Search: "",
 		Limit:  configs.DEFAULT_LIMIT,
