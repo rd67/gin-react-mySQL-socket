@@ -1,2 +1,0 @@
-{"client_id":"[::1]:54423","duration":14.94,"level":"info","method":"POST","msg":"","path":"/v1/users/login","referrer":"","request_id":"decf0a79-0474-430b-be2e-b7a44e1145c0","status":200,"time":"2022-04-20T23:24:18+05:30","user_id":""}
-{"client_id":"[::1]:54448","duration":14.68,"level":"info","method":"POST","msg":"","path":"/v1/users/login","referrer":"","request_id":"ceafd515-9559-41a0-acdc-a2820f853600","status":200,"time":"2022-04-20T23:27:25+05:30","user_id":""}

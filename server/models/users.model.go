@@ -20,6 +20,6 @@ type User struct {
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index:idx_email_deleted;"`
 
 	//	Relations
-	AccessTokens []UserToken `json:"access_tokens" gorm:"foreignKey:user_id;"`
-	// AccessToken  UserToken   `json:"access_token" gorm:"foreignKey:user_id;"`
+	UserTokens []UserToken `json:"user_tokens" gorm:"foreignKey:user_id;"`
+	// AccessToken  UserToken   `json:"user_tokens" gorm:"foreignKey:user_id;"`
 }
