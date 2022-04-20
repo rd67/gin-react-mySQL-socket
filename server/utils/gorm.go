@@ -54,6 +54,6 @@ func ConnectDb() {
 	}
 
 	log.Println("DB Connected")
-	db.AutoMigrate(models.User{}, models.UserToken{})
+	db.AutoMigrate(models.User{}, models.UserToken{}, models.Chat{}, models.ChatMessage{})
 	DBConn = db
 }
