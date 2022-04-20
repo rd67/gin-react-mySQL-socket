@@ -11,6 +11,7 @@ import (
 	"github.com/rd67/gin-react-mySQL-socket/utils"
 )
 
+//	User Register
 func UserRegister(c *gin.Context) {
 
 	//	Validating Response
@@ -112,5 +113,59 @@ func UserLogin(c *gin.Context) {
 
 	c.JSON(response.StatusCode, response)
 	return
+}
 
+//	Users Listing
+func UsersListing(c *gin.Context) {
+
+	var data = IUsersListing{
+		Search: "",
+		Limit:  configs.DEFAULT_LIMIT,
+		Offset: 0,
+	}
+
+	//	Validation
+	err := c.ShouldBindQuery(&data)
+	if err != nil {
+		helpers.ValidationResponse(c, err)
+		return
+	}
+
+	var auth_user = c.MustGet("auth_user").(models.User)
+
+	// "auth_user": c.MustGet("auth_user").(models.User),
+
+	var count int64
+	var rows []models.User
+
+	var query = utils.DBConn.Model(models.User{}).Where("id != ?", auth_user.ID)
+
+	if data.Search != "" {
+		query.Where("(name LIKE '%" + data.Search + "%') OR (email LIKE '%" + data.Search + "%')")
+		//((name LIKE %?%) OR (email LIKE %?%))
+	}
+
+	if err := query.Count(&count).Error; err != nil {
+		helpers.ErrorResponse(c, err)
+		return
+	}
+
+	if err := query.Find(&rows).Error; err != nil {
+		helpers.ErrorResponse(c, err)
+		return
+	}
+
+	response := IUserListingResponse{
+		ICommonResponse: configs.ICommonResponse{
+			StatusCode: http.StatusOK,
+			Message:    "Users listing",
+		},
+		Data: IUserListingData{
+			Count: count,
+			Rows:  rows,
+		},
+	}
+
+	c.JSON(response.StatusCode, response)
+	return
 }

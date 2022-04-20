@@ -21,4 +21,5 @@ type User struct {
 
 	//	Relations
 	AccessTokens []UserToken `json:"access_tokens" gorm:"foreignKey:user_id;"`
+	// AccessToken  UserToken   `json:"access_token" gorm:"foreignKey:user_id;"`
 }

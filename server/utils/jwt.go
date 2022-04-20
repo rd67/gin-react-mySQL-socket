@@ -13,12 +13,11 @@ import (
 
 var JwtConfig = configs.Config.Jwt
 
-func JwtGenerateToken(id uint) (string, error) {
-	fmt.Println(JwtConfig)
-
+func JwtGenerateToken(id uint, token_type string) (string, error) {
 	claims := jwt.MapClaims{}
 
 	claims["id"] = id
+	claims["token_type"] = token_type
 	claims["exp"] = time.Now().Add(time.Hour * time.Duration(JwtConfig.HourLifespan)).Unix()
 
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -36,10 +35,10 @@ func JwtExtractToken(c *gin.Context) string {
 	return ""
 }
 
-func JwtValidateToken(c *gin.Context) error {
+func JwtValidateToken(c *gin.Context) (*jwt.Token, error) {
 	jwtToken := JwtExtractToken(c)
 
-	_, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
+	token, err := jwt.Parse(jwtToken, func(token *jwt.Token) (interface{}, error) {
 
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
 			return nil, fmt.Errorf("Unexpected signing method: %v", token.Header["alg"])
@@ -50,10 +49,10 @@ func JwtValidateToken(c *gin.Context) error {
 	})
 
 	if err != nil {
-		return err
+		return nil, err
 	}
 
-	return nil
+	return token, nil
 
 	//	https://seefnasrul.medium.com/create-your-first-go-rest-api-with-jwt-authentication-in-gin-framework-dbe5bda72817
 
