@@ -131,18 +131,15 @@ func UsersListing(c *gin.Context) {
 		return
 	}
 
-	var auth_user = c.MustGet("auth_user").(models.User)
-
-	// "auth_user": c.MustGet("auth_user").(models.User),
+	var authUser = c.MustGet("authUser").(models.User)
 
 	var count int64
 	var rows []models.User
 
-	var query = utils.DBConn.Model(models.User{}).Where("id != ?", auth_user.ID)
+	var query = utils.DBConn.Model(models.User{}).Where("id != ?", authUser.ID)
 
 	if data.Search != "" {
 		query.Where("(name LIKE '%" + data.Search + "%') OR (email LIKE '%" + data.Search + "%')")
-		//((name LIKE %?%) OR (email LIKE %?%))
 	}
 
 	if err := query.Count(&count).Error; err != nil {

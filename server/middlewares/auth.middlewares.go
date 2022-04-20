@@ -43,9 +43,6 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		fmt.Println(user_id)
-		fmt.Println(token)
-
 		var user models.User
 		// var userToken models.UserToken
 
@@ -60,7 +57,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		c.Set("auth_user", user)
+		c.Set("authUser", user)
 
 		c.Next()
 
