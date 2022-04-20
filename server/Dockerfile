@@ -1,20 +1,24 @@
 #base image
 FROM golang:1.18-alpine
 
-#directory
+# Set the Current Working Directory inside the container
 WORKDIR /app
 
-# Retrieve application dependencies using go modules.
-# Allows container builds to reuse downloaded dependencies.
-COPY go.* ./
+RUN GO111MODULE=on
+
+# Copy go mod and sum files
+COPY go.mod go.sum ./
+
+# Download all dependencies. Dependencies will be cached if the go.mod and go.sum files are not changed
 RUN go mod download
 
-# Copy local code to the container image.
-COPY . ./
+COPY . . 
 
-# Build the binary.
-# -mod=readonly ensures immutable go.mod and go.sum in container builds.
-RUN CGO_ENABLED=0 GOOS=linux go build -mod=readonly -v -o server
+# Build the application
+RUN go build -o main .
 
-# Run the web service on container startup.
-CMD [ "./server" ]
+# Expose port 5000 to the outside world
+EXPOSE 5000
+
+# Command to run the executable
+CMD ["./main"]
