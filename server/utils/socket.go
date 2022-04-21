@@ -33,7 +33,9 @@ func reader(conn *websocket.Conn) {
 }
 
 func ConnectSocket(c *gin.Context) {
+	//https://tutorialedge.net/projects/chat-system-in-go-and-react/part-2-simple-communication/
 
+	//https://webdevelop.pro/blog/guide-creating-websocket-client-golang-using-mutex-and-channel
 	conn, err := upgrader.Upgrade(c.Writer, c.Request, nil)
 	if err != nil {
 		log.Println("Error during connection upgradation:", err)
