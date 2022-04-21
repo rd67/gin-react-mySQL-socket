@@ -23,6 +23,8 @@ func main() {
 	router.Use(middlewares.RequestIdHandler())
 	router.Use(cors.Default())
 
+	router.GET("/ws", middlewares.AuthMiddleware(), utils.ConnectSocket)
+
 	v1.SetupRoutes(router)
 
 	//	Not Found Route
