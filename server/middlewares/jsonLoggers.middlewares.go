@@ -42,7 +42,7 @@ func JSONLogMiddleware() gin.HandlerFunc {
 			"method":     c.Request.Method,
 			"path":       c.Request.RequestURI,
 			"status":     c.Writer.Status(),
-			"user_id":    helpers.GetUserId(c),
+			"user_id":    helpers.GetAuthUserId(c),
 			"referrer":   c.Request.Referer(),
 			"request_id": c.Writer.Header().Get("Request-Id"),
 		})

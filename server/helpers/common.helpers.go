@@ -1,6 +1,7 @@
 package helpers
 
 import (
+	"fmt"
 	"strings"
 	"time"
 
@@ -36,19 +37,11 @@ func GetDurationInMillseconds(start time.Time) float64 {
 	return rounded
 }
 
-func GetUserId(c *gin.Context) string {
+func GetAuthUserId(c *gin.Context) string {
+	authUserId, exists := c.Get("authUserId")
+	if !exists {
+		return ""
+	}
 
-	//TODO ix This
-
-	// _, exists != c.Get("authUser")
-	// if !exits {
-	// 	return ""
-	// }
-
-	// authUser, exists := c.MustGet("authUser").(models.User)
-	// if exists {
-	// 	return fmt.Sprintf("%d", authUser.ID)
-	// }
-
-	return ""
+	return fmt.Sprintf("%v", authUserId)
 }

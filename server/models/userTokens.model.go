@@ -13,6 +13,8 @@ type UserToken struct {
 
 	Token string `json:"token" gorm:"type:varchar(512); not null; index:idx_token_deleted;"`
 
+	// SocketId string `json:"socket_id" gorm:"type:varchar(100);"`
+
 	CreatedAt time.Time      `json:"created_at" gorm:"not null; default:CURRENT_TIMESTAMP(3);"`
 	UpdatedAt time.Time      `json:"updated_at" gorm:"not null; default:CURRENT_TIMESTAMP(3) ON UPDATE CURRENT_TIMESTAMP(3);"`
 	DeletedAt gorm.DeletedAt `json:"deleted_at" gorm:"index:idx_token_deleted;"`

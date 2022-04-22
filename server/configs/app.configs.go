@@ -18,6 +18,8 @@ func init() {
 type IAppConfig struct {
 	Port int
 	Name string
+
+	AppURL string
 }
 
 type IDatabaseConfig struct {
@@ -49,8 +51,9 @@ func init() {
 	}
 
 	AppConfig := IAppConfig{
-		Port: Port,
-		Name: os.Getenv("APP_NAME"),
+		Port:   Port,
+		Name:   os.Getenv("APP_NAME"),
+		AppURL: os.Getenv("APP_URL"),
 	}
 
 	DatabaseConfig := IDatabaseConfig{

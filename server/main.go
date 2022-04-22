@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/middlewares"
+	"github.com/rd67/gin-react-mySQL-socket/socket"
 	"github.com/rd67/gin-react-mySQL-socket/utils"
 	v1 "github.com/rd67/gin-react-mySQL-socket/v1"
 )
@@ -21,9 +21,9 @@ func main() {
 
 	router.Use(middlewares.JSONLogMiddleware())
 	router.Use(middlewares.RequestIdHandler())
-	router.Use(cors.Default())
+	router.Use(middlewares.CorsMiddleware(configs.Config.App.AppURL))
 
-	router.GET("/ws", middlewares.AuthMiddleware(), utils.ConnectSocket)
+	router.GET("/ws/", middlewares.AuthMiddleware(), socket.ConnectSocket)
 
 	v1.SetupRoutes(router)
 
