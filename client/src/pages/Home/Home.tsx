@@ -1,44 +1,85 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 
 import "./home.scss";
 
-let socket: Socket;
-
 export default function Home() {
+  const [socket, setSocket] = useState<Socket>();
+
+  // useEffect(() => , [setSocket]);
+
+  // the client is not using the websocket protocol: 'upgrade' token not found in 'Connection' header
+
   useEffect(() => {
     const token =
       "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA3MjkwNTgsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.ay4VI3fSAn31XFlhqpBXu7OLYdar_pWzaeAX8fugytw";
 
-    const url = `localhost:5001/ws?token=${token}`;
+    var exampleSocket = new WebSocket(`ws://localhost:5001/ws/?token=${token}`);
 
-    socket = io(`http://localhost:5001`, {
-      reconnectionDelayMax: 10000,
-      path: "/ws",
-      auth: {
-        Authorization: `Beared ${token}`,
-      },
-      query: {
-        token: token,
-      },
-      // extraHeaders: {
-      //   Connection: "upgrade",
-      // },
-      reconnectionAttempts: 0,
-      upgrade: true,
-      transports: ["websocket"],
-    });
+    exampleSocket.onopen = function (event) {
+      console.log("Web Socket Connected", event);
+      exampleSocket.send(
+        "Here's some text that the server is urgently awaiting!"
+      );
+    };
 
-    console.log(`Connecting socket...`, socket);
-    socket.on("connection", (c) => {
-      console.log(`Connected...`, c);
-    });
+    exampleSocket.onmessage = function (event) {
+      console.log("Event Received", event);
+    };
+
+    // const newSocket = io(`http://localhost:5001`, {
+    //   query: {
+    //     token: token,
+    //   },
+    //   transports: ["websocket"],
+    //   // transportOptions: {
+    //   //   websocket: {
+    //   //     extraHeaders: {
+    //   //       Connection: "upgrade",
+    //   //       Cookie: "It works",
+    //   //     },
+    //   //   },
+    //   // },
+    // });
+
+    // setSocket(newSocket);
 
     // return () => {
-    //   console.log("Disconnecting socket...");
-    //   if (socket) socket.disconnect();
+    //   newSocket.close();
     // };
-  });
+  }, [setSocket]);
+
+  // useEffect(() => {
+  //   const token =
+  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA3MjkwNTgsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.ay4VI3fSAn31XFlhqpBXu7OLYdar_pWzaeAX8fugytw";
+
+  //   // socket = io(`http://localhost:5001`, {
+  //   //   // reconnectionDelayMax: 10000,
+  //   //   // path: "/ws",
+  //   //   // auth: {
+  //   //   //   Authorization: `Bearer ${token}`,
+  //   //   // },
+  //   //   query: {
+  //   //     token: token,
+  //   //   },
+  //   //   // extraHeaders: {
+  //   //   //   Connection: "upgrade",
+  //   //   // },
+  //   //   // reconnectionAttempts: 0,
+  //   //   // upgrade: true,
+  //   //   // transports: ["websocket"],
+  //   // });
+
+  //   // console.log(`Connecting socket...`, socket);
+  //   // socket.on("connection", (c) => {
+  //   //   console.log(`Connected...`, c);
+  //   // });
+
+  //   // return () => {
+  //   //   console.log("Disconnecting socket...");
+  //   //   if (socket) socket.disconnect();
+  //   // };
+  // }, []);
 
   return (
     <main className="content">
@@ -60,7 +101,7 @@ export default function Home() {
                 </div>
               </div>
 
-              <a
+              {/* <a
                 href="#"
                 className="list-group-item list-group-item-action border-0"
               >
@@ -142,7 +183,7 @@ export default function Home() {
                     </div>
                   </div>
                 </div>
-              </a>
+              </a> */}
               <hr className="d-block d-lg-none mt-1 mb-0" />
             </div>
             <div className="col-12 col-lg-7 col-xl-9">
