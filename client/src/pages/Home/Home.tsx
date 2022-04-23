@@ -3,83 +3,45 @@ import { io, Socket } from "socket.io-client";
 
 import "./home.scss";
 
+var socket: WebSocket;
+
 export default function Home() {
-  const [socket, setSocket] = useState<Socket>();
-
-  // useEffect(() => , [setSocket]);
-
-  // the client is not using the websocket protocol: 'upgrade' token not found in 'Connection' header
+  const [chatHistory, setChatHistory] = useState<any[]>([]);
 
   useEffect(() => {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA3MjkwNTgsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.ay4VI3fSAn31XFlhqpBXu7OLYdar_pWzaeAX8fugytw";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA4MTg2MzYsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.cvaZ5N749Dsmcq6aCRRofpfkEbehgrBgFidgfAvWIAs";
 
-    var exampleSocket = new WebSocket(`ws://localhost:5001/ws/?token=${token}`);
+    const url = `ws://localhost:5000/ws/?token=${token}`;
 
-    exampleSocket.onopen = function (event) {
-      console.log("Web Socket Connected", event);
-      exampleSocket.send(
-        "Here's some text that the server is urgently awaiting!"
-      );
+    socket = new WebSocket(url);
+
+    socket.onopen = () => {
+      console.log(`Successfully Connected: ${url}`);
     };
 
-    exampleSocket.onmessage = function (event) {
-      console.log("Event Received", event);
+    socket.onmessage = (msg) => {
+      console.log(msg);
+      setChatHistory([...chatHistory, msg.data]);
     };
 
-    // const newSocket = io(`http://localhost:5001`, {
-    //   query: {
-    //     token: token,
-    //   },
-    //   transports: ["websocket"],
-    //   // transportOptions: {
-    //   //   websocket: {
-    //   //     extraHeaders: {
-    //   //       Connection: "upgrade",
-    //   //       Cookie: "It works",
-    //   //     },
-    //   //   },
-    //   // },
-    // });
+    socket.onclose = (event) => {
+      console.log("Socket Closed Connection: ", event);
+    };
 
-    // setSocket(newSocket);
+    socket.onerror = (error) => {
+      console.log("Socket Error: ", error);
+    };
+  }, []);
 
-    // return () => {
-    //   newSocket.close();
-    // };
-  }, [setSocket]);
+  useEffect(() => {
+    console.log(chatHistory);
+  }, [chatHistory]);
 
-  // useEffect(() => {
-  //   const token =
-  //     "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA3MjkwNTgsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.ay4VI3fSAn31XFlhqpBXu7OLYdar_pWzaeAX8fugytw";
-
-  //   // socket = io(`http://localhost:5001`, {
-  //   //   // reconnectionDelayMax: 10000,
-  //   //   // path: "/ws",
-  //   //   // auth: {
-  //   //   //   Authorization: `Bearer ${token}`,
-  //   //   // },
-  //   //   query: {
-  //   //     token: token,
-  //   //   },
-  //   //   // extraHeaders: {
-  //   //   //   Connection: "upgrade",
-  //   //   // },
-  //   //   // reconnectionAttempts: 0,
-  //   //   // upgrade: true,
-  //   //   // transports: ["websocket"],
-  //   // });
-
-  //   // console.log(`Connecting socket...`, socket);
-  //   // socket.on("connection", (c) => {
-  //   //   console.log(`Connected...`, c);
-  //   // });
-
-  //   // return () => {
-  //   //   console.log("Disconnecting socket...");
-  //   //   if (socket) socket.disconnect();
-  //   // };
-  // }, []);
+  const send = () => {
+    console.log("hello");
+    socket?.send(JSON.stringify({ Kind: "Typing" }));
+  };
 
   return (
     <main className="content">
@@ -269,132 +231,28 @@ export default function Home() {
 
               <div className="position-relative">
                 <div className="chat-messages p-4">
-                  <div className="chat-message-right pb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                        className="rounded-circle mr-1"
-                        alt="Chris Wood"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:33 am
+                  {chatHistory.map((chat, index) => {
+                    return (
+                      <div className="chat-message-right mb-4" key={index}>
+                        <div>
+                          <img
+                            src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                            className="rounded-circle mr-1"
+                            alt="Chris Wood"
+                            width="40"
+                            height="40"
+                          />
+                          <div className="text-muted small text-nowrap mt-2">
+                            2:38 am
+                          </div>
+                        </div>
+                        <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
+                          <div className="font-weight-bold mb-1">You</div>
+                          {chat}
+                        </div>
                       </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                      <div className="font-weight-bold mb-1">You</div>
-                      Lorem ipsum dolor sit amet, vis erat denique in, dicunt
-                      prodesset te vix.
-                    </div>
-                  </div>
-
-                  <div className="chat-message-left pb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                        className="rounded-circle mr-1"
-                        alt="Sharon Lessman"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:34 am
-                      </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                      <div className="font-weight-bold mb-1">
-                        Sharon Lessman
-                      </div>
-                      Sit meis deleniti eu, pri vidit meliore docendi ut, an eum
-                      erat animal commodo.
-                    </div>
-                  </div>
-
-                  <div className="chat-message-right mb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                        className="rounded-circle mr-1"
-                        alt="Chris Wood"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:35 am
-                      </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                      <div className="font-weight-bold mb-1">You</div>
-                      Cum ea graeci tractatos.
-                    </div>
-                  </div>
-
-                  <div className="chat-message-left pb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                        className="rounded-circle mr-1"
-                        alt="Sharon Lessman"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:36 am
-                      </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                      <div className="font-weight-bold mb-1">
-                        Sharon Lessman
-                      </div>
-                      Sed pulvinar, massa vitae interdum pulvinar, risus lectus
-                      porttitor magna, vitae commodo lectus mauris et velit.
-                      Proin ultricies placerat imperdiet. Morbi varius quam ac
-                      venenatis tempus.
-                    </div>
-                  </div>
-
-                  <div className="chat-message-left pb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                        className="rounded-circle mr-1"
-                        alt="Sharon Lessman"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:37 am
-                      </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                      <div className="font-weight-bold mb-1">
-                        Sharon Lessman
-                      </div>
-                      Cras pulvinar, sapien id vehicula aliquet, diam velit
-                      elementum orci.
-                    </div>
-                  </div>
-
-                  <div className="chat-message-right mb-4">
-                    <div>
-                      <img
-                        src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                        className="rounded-circle mr-1"
-                        alt="Chris Wood"
-                        width="40"
-                        height="40"
-                      />
-                      <div className="text-muted small text-nowrap mt-2">
-                        2:38 am
-                      </div>
-                    </div>
-                    <div className="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                      <div className="font-weight-bold mb-1">You</div>
-                      Lorem ipsum dolor sit amet, vis erat denique in, dicunt
-                      prodesset te vix.
-                    </div>
-                  </div>
+                    );
+                  })}
                 </div>
               </div>
 
@@ -404,8 +262,17 @@ export default function Home() {
                     type="text"
                     className="form-control"
                     placeholder="Type your message"
+                    onChange={(event) => {
+                      const value = event.target.value;
+
+                      socket?.send(
+                        JSON.stringify({ Kind: "Typing", OuserId: 2 })
+                      );
+                    }}
                   />
-                  <button className="btn btn-primary">Send</button>
+                  <button className="btn btn-primary" onClick={send}>
+                    Send
+                  </button>
                 </div>
               </div>
             </div>

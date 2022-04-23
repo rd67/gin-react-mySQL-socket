@@ -2,38 +2,34 @@ package main
 
 import (
 	"fmt"
-	// "log"
 	"net/http"
 
 	"github.com/gin-gonic/gin"
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/middlewares"
 
-	"github.com/rd67/gin-react-mySQL-socket/socket"
-	// socketio "github.com/googollee/go-socket.io"
-	"github.com/rd67/gin-react-mySQL-socket/utils"
+	"github.com/rd67/gin-react-mySQL-socket/pkg"
+	"github.com/rd67/gin-react-mySQL-socket/pkg/websocket"
 	v1 "github.com/rd67/gin-react-mySQL-socket/v1"
 )
 
 func init() {
-	utils.ConnectDb()
+	pkg.ConnectDb()
 }
 
 func main() {
 	router := gin.Default()
 
-	hub := socket.NewHub()
-	go hub.Run()
+	pool := websocket.NewPool()
+	go pool.Start()
 
-	router.Use(middlewares.JSONLogMiddleware())
+	// router.Use(gin.Recovery())
+	router.Use(middlewares.JSONLogMiddleware()) //Custom Logs
 	router.Use(middlewares.RequestIdHandler())
 	router.Use(middlewares.CorsMiddleware(configs.Config.App.AppURL))
 
-	// router.GET("/socket.io/*any", gin.WrapH(server))
-	// router.POST("/socket.io/*any", gin.WrapH(server))
-
 	router.GET("/ws/", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
-		socket.ServeWs(hub, ctx)
+		websocket.ServeWs(pool, ctx)
 	})
 
 	v1.SetupRoutes(router)
