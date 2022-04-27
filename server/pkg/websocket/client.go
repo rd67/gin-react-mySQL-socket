@@ -8,7 +8,6 @@ import (
 )
 
 type IClient struct {
-	ID     string
 	Conn   *websocket.Conn
 	Pool   *Pool
 	UserId string
@@ -45,6 +44,22 @@ func (c *IClient) Read() {
 			return
 		}
 		fmt.Printf("\nEventData = %v", eventData)
+
+		switch eventData.Kind {
+
+		case KindTyping:
+
+			// eventData := IUserTypingData{eventData}
+
+			data := IUserTypingData{
+				Kind: eventData.Kind,
+				// OUserId: eventData.Payload,
+			}
+
+			c.Pool.Broadcast <- data
+
+			break
+		}
 
 		// switch eventData.Kind {
 

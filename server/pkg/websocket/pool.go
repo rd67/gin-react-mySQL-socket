@@ -6,7 +6,8 @@ type Pool struct {
 	Join      chan *IClient
 	Left      chan *IClient
 	Clients   map[*IClient]bool
-	Broadcast chan interface{}
+	Broadcast chan interface{} //	Sends to all clients
+	Send      chan interface{} //	Sendts to single client
 }
 
 func NewPool() *Pool {
@@ -15,6 +16,7 @@ func NewPool() *Pool {
 		Left:      make(chan *IClient),
 		Clients:   make(map[*IClient]bool),
 		Broadcast: make(chan interface{}),
+		Send:      make(chan interface{}),
 	}
 }
 
@@ -57,10 +59,28 @@ func (pool *Pool) Start() {
 			for client := range pool.Clients {
 				err := client.Conn.WriteJSON(message)
 				if err != nil {
-					fmt.Println(err)
+					//	In Case of error removing the socket client
+					UserLeft(client)
+					fmt.Printf("Error while broadcasting to User:%s, %v", client.UserId, err)
 					return
 				}
 			}
+			break
+
+		case message := <-pool.Send:
+			for client := range pool.Clients {
+
+				err := client.Conn.WriteJSON(message)
+				if err != nil {
+					UserLeft(client)
+					fmt.Printf("\nError while emiting to User:%s, %v", client.UserId, err)
+					return
+				}
+
+				fmt.Printf("\nEmited to User:%s, data:%v", client.UserId, message)
+
+			}
+
 			break
 
 		}

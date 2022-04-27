@@ -1,4 +1,4 @@
-package pkg
+package models
 
 import (
 	"fmt"
@@ -6,7 +6,6 @@ import (
 	"os"
 
 	"github.com/rd67/gin-react-mySQL-socket/configs"
-	"github.com/rd67/gin-react-mySQL-socket/models"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"gorm.io/gorm/logger"
@@ -54,6 +53,6 @@ func ConnectDb() {
 	}
 
 	log.Println("DB Connected")
-	db.AutoMigrate(models.User{}, models.UserToken{}, models.Chat{}, models.ChatMessage{})
+	db.AutoMigrate(User{}, UserToken{}, Chat{}, ChatMembers{}, ChatMessage{})
 	DBConn = db
 }

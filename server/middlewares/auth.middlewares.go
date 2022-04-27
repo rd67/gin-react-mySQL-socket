@@ -48,7 +48,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		//db.Preload("Post", "is_private = ? AND user_id != ?", "true", currentUser.ID).Find(&topicPosts)
 		//Joins("user_tokens", utils.DBConn.Where(&userToken{"token": claims["id"]}))
-		err = pkg.DBConn.
+		err = models.DBConn.
 			Preload("UserTokens", "token = ?", token.Raw).
 			Where(fmt.Sprintf("users.id = %d", user_id)).First(&user).Error
 		if err != nil {

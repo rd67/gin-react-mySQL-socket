@@ -7,14 +7,14 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/middlewares"
+	"github.com/rd67/gin-react-mySQL-socket/models"
 
-	"github.com/rd67/gin-react-mySQL-socket/pkg"
 	"github.com/rd67/gin-react-mySQL-socket/pkg/websocket"
 	v1 "github.com/rd67/gin-react-mySQL-socket/v1"
 )
 
 func init() {
-	pkg.ConnectDb()
+	models.ConnectDb()
 }
 
 func main() {

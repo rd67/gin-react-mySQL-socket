@@ -18,7 +18,7 @@ func UserTokenGenerate(user_id uint) (string, error) {
 		Token:  token,
 	}
 
-	err = pkg.DBConn.Save(&userToken).Error
+	err = models.DBConn.Save(&userToken).Error
 	if err != nil {
 		return "", err
 	}

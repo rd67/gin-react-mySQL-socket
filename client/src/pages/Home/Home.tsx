@@ -10,7 +10,7 @@ export default function Home() {
 
   useEffect(() => {
     const token =
-      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTA4MTg2MzYsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.cvaZ5N749Dsmcq6aCRRofpfkEbehgrBgFidgfAvWIAs";
+      "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2NTE4MDY1NzEsImlkIjoyLCJ0b2tlbl90eXBlIjoiQVVUSCJ9.zCGBDrDa4a7Y0-DwdqrETT6PpminURc1X0T_ZrZFID8";
 
     const url = `ws://localhost:5000/ws/?token=${token}`;
 
@@ -39,8 +39,11 @@ export default function Home() {
   }, [chatHistory]);
 
   const send = () => {
-    console.log("hello");
-    socket?.send(JSON.stringify({ Kind: "Typing" }));
+    const data = { kind: "Typing", payload: "New Message" };
+
+    socket?.send(JSON.stringify(data));
+
+    console.log({ data });
   };
 
   return (

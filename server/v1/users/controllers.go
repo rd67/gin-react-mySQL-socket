@@ -23,7 +23,7 @@ func UserRegister(c *gin.Context) {
 
 	//	Email uniqueness check
 	var emailCount int64
-	if err := pkg.DBConn.Model(models.User{}).Where(fmt.Sprintf("email = '%s'", data.Email)).Count(&emailCount).Error; err != nil {
+	if err := models.DBConn.Model(models.User{}).Where(fmt.Sprintf("email = '%s'", data.Email)).Count(&emailCount).Error; err != nil {
 		helpers.ErrorResponse(c, err)
 		return
 	}
@@ -44,7 +44,7 @@ func UserRegister(c *gin.Context) {
 	user.Email = data.Email
 	user.Password = password
 
-	if err := pkg.DBConn.Save(&user).Error; err != nil {
+	if err := models.DBConn.Save(&user).Error; err != nil {
 		helpers.ErrorResponse(c, err)
 		return
 	}
@@ -82,7 +82,7 @@ func UserLogin(c *gin.Context) {
 	}
 
 	var user models.User
-	err = pkg.DBConn.Where(fmt.Sprintf("email = '%s'", data.Email)).First(&user).Error
+	err = models.DBConn.Where(fmt.Sprintf("email = '%s'", data.Email)).First(&user).Error
 	if err != nil {
 		helpers.ActionFailedResponse(c, http.StatusBadRequest, USER_MESSAGES["AccountNotFound"])
 		return
@@ -135,7 +135,7 @@ func UsersListing(c *gin.Context) {
 	var count int64
 	var rows []models.User
 
-	var query = pkg.DBConn.Model(models.User{}).Where("id != ?", authUser.ID)
+	var query = models.DBConn.Model(models.User{}).Where("id != ?", authUser.ID)
 
 	if data.Search != "" {
 		query.Where("(name LIKE '%" + data.Search + "%') OR (email LIKE '%" + data.Search + "%')")

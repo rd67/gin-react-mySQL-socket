@@ -22,7 +22,7 @@ type IUserLeaveData struct {
 	UserId string `json:"user_id"`
 }
 
-type IUserTypeData struct {
+type IUserTypingData struct {
 	Kind    string `json:"kind"`
-	OuserId string `json:"user_id"`
+	OUserId string `json:"user_id"`
 }
