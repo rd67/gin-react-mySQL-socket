@@ -1,4 +1,4 @@
-package utils
+package pkg
 
 import (
 	"fmt"
@@ -27,7 +27,12 @@ func JwtGenerateToken(id uint, token_type string) (string, error) {
 }
 
 func JwtExtractToken(c *gin.Context) string {
-	bearerToken := c.Request.Header.Get("Authorization")
+	bearerToken := c.Query("token")
+	if bearerToken != "" {
+		return bearerToken
+	}
+
+	bearerToken = c.Request.Header.Get("Authorization")
 	if len(strings.Split(bearerToken, " ")) == 2 {
 		return strings.Split(bearerToken, " ")[1]
 	}

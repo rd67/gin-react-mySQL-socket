@@ -9,7 +9,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/models"
-	"github.com/rd67/gin-react-mySQL-socket/utils"
+	"github.com/rd67/gin-react-mySQL-socket/pkg"
 )
 
 func AuthMiddleware() gin.HandlerFunc {
@@ -20,7 +20,7 @@ func AuthMiddleware() gin.HandlerFunc {
 			Message:    "Unauthorized",
 		}
 
-		token, err := utils.JwtValidateToken(c)
+		token, err := pkg.JwtValidateToken(c)
 		if err != nil || !token.Valid {
 			c.JSON(unAuthorizedResponse.StatusCode, unAuthorizedResponse)
 			c.Abort()
@@ -48,7 +48,7 @@ func AuthMiddleware() gin.HandlerFunc {
 
 		//db.Preload("Post", "is_private = ? AND user_id != ?", "true", currentUser.ID).Find(&topicPosts)
 		//Joins("user_tokens", utils.DBConn.Where(&userToken{"token": claims["id"]}))
-		err = utils.DBConn.
+		err = models.DBConn.
 			Preload("UserTokens", "token = ?", token.Raw).
 			Where(fmt.Sprintf("users.id = %d", user_id)).First(&user).Error
 		if err != nil {
@@ -58,6 +58,7 @@ func AuthMiddleware() gin.HandlerFunc {
 		}
 
 		c.Set("authUser", user)
+		c.Set("authUserId", user.ID)
 
 		c.Next()
 

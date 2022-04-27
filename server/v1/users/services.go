@@ -3,12 +3,12 @@ package v1Users
 import (
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/models"
-	"github.com/rd67/gin-react-mySQL-socket/utils"
+	"github.com/rd67/gin-react-mySQL-socket/pkg"
 )
 
 func UserTokenGenerate(user_id uint) (string, error) {
 
-	token, err := utils.JwtGenerateToken(user_id, configs.TOKEN_TYPE_AUTH)
+	token, err := pkg.JwtGenerateToken(user_id, configs.TOKEN_TYPE_AUTH)
 	if err != nil {
 		return "", err
 	}
@@ -18,7 +18,7 @@ func UserTokenGenerate(user_id uint) (string, error) {
 		Token:  token,
 	}
 
-	err = utils.DBConn.Save(&userToken).Error
+	err = models.DBConn.Save(&userToken).Error
 	if err != nil {
 		return "", err
 	}

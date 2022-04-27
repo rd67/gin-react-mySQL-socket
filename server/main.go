@@ -4,24 +4,33 @@ import (
 	"fmt"
 	"net/http"
 
-	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/rd67/gin-react-mySQL-socket/configs"
 	"github.com/rd67/gin-react-mySQL-socket/middlewares"
-	"github.com/rd67/gin-react-mySQL-socket/utils"
+	"github.com/rd67/gin-react-mySQL-socket/models"
+
+	"github.com/rd67/gin-react-mySQL-socket/pkg/websocket"
 	v1 "github.com/rd67/gin-react-mySQL-socket/v1"
 )
 
 func init() {
-	utils.ConnectDb()
+	models.ConnectDb()
 }
 
 func main() {
 	router := gin.Default()
 
-	router.Use(middlewares.JSONLogMiddleware())
+	pool := websocket.NewPool()
+	go pool.Start()
+
+	// router.Use(gin.Recovery())
+	router.Use(middlewares.JSONLogMiddleware()) //Custom Logs
 	router.Use(middlewares.RequestIdHandler())
-	router.Use(cors.Default())
+	router.Use(middlewares.CorsMiddleware(configs.Config.App.AppURL))
+
+	router.GET("/ws/", middlewares.AuthMiddleware(), func(ctx *gin.Context) {
+		websocket.ServeWs(pool, ctx)
+	})
 
 	v1.SetupRoutes(router)
 
